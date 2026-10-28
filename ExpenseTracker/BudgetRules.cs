@@ -44,7 +44,34 @@ public static class BudgetRules
     public static string ClassifyAmount(decimal amount)
     {
         // TODO
-        throw new NotImplementedException();
+        if (amount <= 0)
+        {
+            throw new NotImplementedException("Amount must be positive.");
+        }
+
+        return amount switch
+        {
+            < 10 => "Micro",
+            < 50 => "Small",
+            < 200 => "Medium",
+            _ => "Large"
+        };
+
+        //old switch expression
+        /*
+        switch (amount)
+        {
+            case < 10:
+                return "Micro";
+            case < 50:
+                return "Small";
+            case < 200:
+                return "Medium";
+            default:
+                return "Large";
+        }       
+          
+         */
     }
 
     /// <summary>
