@@ -84,8 +84,49 @@ public static class BudgetRules
     public static string? NormalizeCategory(string? input)
     {
         // TODO
-        throw new NotImplementedException();
+        
+        //throw new NotImplementedException();
+        if (input == null)
+        {
+            return null;
+        }
+
+        string category = input.Trim().ToLowerInvariant();
+
+        return category switch
+        {
+            "food" or "f" => "Food",
+            "transport" or "t" => "Transport",
+            "utilities" or "u" => "Utilities",
+            "entertainment" or "e" => "Entertainment",
+            "other" or "o" => "Other",
+            _ => null
+        };
     }
+
+    //old switch expression
+    /*
+        switch (category)
+        {
+            case "food":
+            case "f":
+                return "Food";
+            case "transport":
+            case "t":
+                return "Transport";
+            case "utilities":
+            case "u":
+                return "Utilities";
+            case "entertainment":
+            case "e":
+                return "Entertainment";
+            case "other":
+            case "o":
+                return "Other";
+            default:
+                return null;
+        }
+     */
 
     /// <summary>
     /// Returns a budget-status message from the remaining funds and the limit:
@@ -93,29 +134,29 @@ public static class BudgetRules
     /// limit remains), or "On track". Throw when the limit is not positive.
     /// </summary>
     public static string BudgetStatus(decimal remaining, decimal monthlyLimit)
-    {
-        // TODO
-        throw new NotImplementedException();
-    }
+{
+    // TODO
+    throw new NotImplementedException();
+}
 
-    /// <summary>
-    /// Formats an amount as currency using the default "$" symbol.
-    /// Implement this as an expression-bodied member that calls the overload.
-    /// </summary>
-    public static string FormatCurrency(decimal amount)
-    {
-        // TODO: return FormatCurrency(amount, "$");
-        throw new NotImplementedException();
-    }
+/// <summary>
+/// Formats an amount as currency using the default "$" symbol.
+/// Implement this as an expression-bodied member that calls the overload.
+/// </summary>
+public static string FormatCurrency(decimal amount)
+{
+    // TODO: return FormatCurrency(amount, "$");
+    throw new NotImplementedException();
+}
 
-    /// <summary>
-    /// Formats an amount as currency using the given symbol, e.g. "$62.40".
-    /// </summary>
-    public static string FormatCurrency(decimal amount, string currencySymbol)
-    {
-        // TODO: use a "0.00" format string
-        throw new NotImplementedException();
-    }
+/// <summary>
+/// Formats an amount as currency using the given symbol, e.g. "$62.40".
+/// </summary>
+public static string FormatCurrency(decimal amount, string currencySymbol)
+{
+    // TODO: use a "0.00" format string
+    throw new NotImplementedException();
+}
 }
 
 /// <summary>
