@@ -135,9 +135,20 @@ public static class BudgetRules
     /// </summary>
     public static string BudgetStatus(decimal remaining, decimal monthlyLimit)
 {
-    // TODO
-    throw new NotImplementedException();
-}
+        // TODO
+        if (monthlyLimit <= 0)
+        {
+            throw new NotImplementedException(
+                "Monthly budget must be positive.");
+        }
+
+        return remaining switch
+        {
+            < 0 => "OVER BUDGET",
+            >= 0 when remaining < monthlyLimit * NearLimitFraction => "Almost out",
+            _ => "On track"
+        };
+    }
 
 /// <summary>
 /// Formats an amount as currency using the default "$" symbol.
