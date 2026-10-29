@@ -138,7 +138,7 @@ public static class BudgetRules
         // TODO
         if (monthlyLimit <= 0)
         {
-            throw new NotImplementedException(
+            throw new InvalidExpenseException(
                 "Monthly budget must be positive.");
         }
 
