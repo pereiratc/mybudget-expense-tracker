@@ -29,7 +29,7 @@ public static class BudgetRules
         // TODO: guard clauses + decimal.Round(amount, 2)
         if (amount <= 0 || amount > MaxAmount)
         {
-            throw new NotImplementedException("Invalid amount. Please enter a positive amount within the allowed limit.");
+            throw new InvalidExpenseException("Invalid amount. Please enter a positive amount within the allowed limit.");
         }
 
         return decimal.Round(amount, 2);
@@ -46,7 +46,7 @@ public static class BudgetRules
         // TODO
         if (amount <= 0)
         {
-            throw new NotImplementedException("Amount must be positive.");
+            throw new InvalidExpenseException("Amount must be positive.");
         }
 
         return amount switch
@@ -155,19 +155,21 @@ public static class BudgetRules
 /// Implement this as an expression-bodied member that calls the overload.
 /// </summary>
 public static string FormatCurrency(decimal amount)
-{
-    // TODO: return FormatCurrency(amount, "$");
-    throw new NotImplementedException();
-}
+//{
+//    // TODO: return FormatCurrency(amount, "$");
+//    throw new NotImplementedException();
+//}
+        => FormatCurrency(amount, "$");
 
-/// <summary>
-/// Formats an amount as currency using the given symbol, e.g. "$62.40".
-/// </summary>
-public static string FormatCurrency(decimal amount, string currencySymbol)
+    /// <summary>
+    /// Formats an amount as currency using the given symbol, e.g. "$62.40".
+    /// </summary>
+    public static string FormatCurrency(decimal amount, string currencySymbol)
 {
-    // TODO: use a "0.00" format string
-    throw new NotImplementedException();
-}
+        // TODO: use a "0.00" format string
+        //throw new NotImplementedException();
+        return $"{currencySymbol}{amount:0.00}";
+    }
 }
 
 /// <summary>
