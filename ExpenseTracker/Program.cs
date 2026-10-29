@@ -21,6 +21,74 @@
 // =====================================================================
 using ExpenseTracker;
 
-Console.WriteLine("MyBudget — TODO: build the interactive menu UI (see the brief).");
-
 // Delete the line above and implement the application here.
+
+decimal totalExpenses = 0m;
+decimal highestExpense = 0m;
+decimal? monthlyBudget = null;
+
+int expenseCount = 0;
+
+decimal foodTotal = 0m;
+decimal transportationTotal = 0m;
+decimal utilitiesTotal = 0m;
+decimal entertainmentTotal = 0m;
+decimal otherTotal = 0m;
+
+bool isRunning = true;
+
+Console.WriteLine("""
+    ==========================================
+                MyBudget Expense Tracker
+    ==========================================
+    """);
+
+while (isRunning)
+{
+    Console.WriteLine("""
+
+        Please select an option:
+        1) Add an expense
+        2) View summary
+        3) Set monthly budget
+        4) Exit
+
+        """);
+
+
+    string choice = Console.ReadLine()?.Trim() ?? "";
+    switch (choice)
+    {
+        case "1":
+            AddExpense();
+            break;
+        case "2":
+            ViewSummary();
+            break;
+        case "3":
+            SetMonthlyBudget();
+            break;
+        case "4":
+            isRunning = false;
+            Console.WriteLine("Exiting the application. Goodbye!");
+            break;
+        default:
+            Console.WriteLine("Invalid choice. Please try again.");
+            break;
+    }
+}
+
+void AddExpense()
+{
+    throw new NotImplementedException();
+}
+
+void ViewSummary()
+{
+    throw new NotImplementedException();
+}
+
+void SetMonthlyBudget()
+{
+    throw new NotImplementedException();
+}
