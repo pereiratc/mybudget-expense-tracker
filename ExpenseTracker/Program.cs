@@ -80,15 +80,90 @@ while (isRunning)
 
 void AddExpense()
 {
-    throw new NotImplementedException();
-}
+    string description;
 
-void ViewSummary()
+    //Validate description input
+    while (true)
+    {
+        Console.Write("Enter expense description: ");
+        description = Console.ReadLine()?.Trim() ?? "";
+
+        // Check if the description is not empty
+        if (!string.IsNullOrEmpty(description))
+        {
+            break;
+        }
+        
+        else
+        {
+            Console.WriteLine("Description cannot be empty. Please try again.");
+        }
+    }
+
+    // Validate amount input
+    decimal amount;
+
+    while (true)
+    {
+        Console.Write("Enter expense amount: ");
+        string input = Console.ReadLine()?.Trim() ?? "";
+        
+        if (!decimal.TryParse(input, out decimal parsedAmount))
+        {
+            Console.WriteLine("Invalid input. Please enter a valid decimal number.");
+            continue;
+        }
+
+        try
+        {
+            amount = BudgetRules.ValidateAmount(parsedAmount);
+            break
+        }
+        catch (InvalidExpenseException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        finally
+        {
+            // Validation complete, continue to next step
+            //No external resources to dispose of, so nothing to do here.
+        }
+
+
+        //Validate category input
+        string category;
+
+        while (true
+
+    }
+
+    void ViewSummary()
 {
     throw new NotImplementedException();
 }
 
 void SetMonthlyBudget()
 {
-    throw new NotImplementedException();
+    while (true)
+    {
+        Console.Write("Enter the monthly budget amount: ");
+        string input = Console.ReadLine()?.Trim() ?? "";
+        if (decimal.TryParse(input, out decimal budgetAmount))
+        {
+            try
+            {
+                monthlyBudget = BudgetRules.ValidateAmount(budgetAmount);
+                Console.WriteLine($"Monthly budget set to {BudgetRules.FormatCurrency(monthlyBudget.Value)}.");
+                break;
+            }
+            catch (InvalidExpenseException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid input. Please enter a valid decimal number.");
+        }
+    }
 }
