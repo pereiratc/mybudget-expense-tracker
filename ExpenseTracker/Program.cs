@@ -46,13 +46,9 @@ Console.WriteLine("""
 while (isRunning)
 {
     Console.WriteLine("""
-
         Please select an option:
-        1) Add an expense
-        2) View summary
-        3) Set monthly budget
-        4) Exit
-
+        1) Add an expense        2) View summary        3) Set monthly budget        4) Exit
+        
         """);
 
 
@@ -60,13 +56,13 @@ while (isRunning)
     switch (choice)
     {
         case "1":
-            AddExpense();
+            AddExpense(); //The method to add an expense is called here
             break;
         case "2":
-            ViewSummary();
+            ViewSummary(); //The method to view the summary is called here
             break;
         case "3":
-            SetMonthlyBudget();
+            SetMonthlyBudget();//The method to set the monthly budget is called here
             break;
         case "4":
             isRunning = false;
@@ -78,92 +74,242 @@ while (isRunning)
     }
 }
 
+
+// Method to add an expense: Add validation for description, amount, category, date, and optional note. Updates running totals and displays confirmation.
 void AddExpense()
 {
     string description;
 
-    //Validate description input
+    // Validate description
     while (true)
     {
-        Console.Write("Enter expense description: ");
+        Console.Write("Description : ");
         description = Console.ReadLine()?.Trim() ?? "";
 
-        // Check if the description is not empty
-        if (!string.IsNullOrEmpty(description))
-        {
+        if (!string.IsNullOrWhiteSpace(description))
             break;
-        }
-        
-        else
-        {
-            Console.WriteLine("Description cannot be empty. Please try again.");
-        }
+
+        Console.WriteLine("  Description cannot be empty.");
     }
 
-    // Validate amount input
+    // Validate amount
     decimal amount;
 
     while (true)
     {
-        Console.Write("Enter expense amount: ");
-        string input = Console.ReadLine()?.Trim() ?? "";
-        
+        Console.Write("Amount      : ");
+        string? input = Console.ReadLine();
+
         if (!decimal.TryParse(input, out decimal parsedAmount))
         {
-            Console.WriteLine("Invalid input. Please enter a valid decimal number.");
+            Console.WriteLine("  Please enter a valid number.");
             continue;
         }
 
         try
         {
             amount = BudgetRules.ValidateAmount(parsedAmount);
-            break
+            break;
         }
         catch (InvalidExpenseException ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"  {ex.Message}");
         }
         finally
         {
-            // Validation complete, continue to next step
-            //No external resources to dispose of, so nothing to do here.
+            // Validation attempt completed.
+            // No external resources require cleanup.
         }
-
-
-        //Validate category input
-        string category;
-
-        while (true
-
     }
 
-    void ViewSummary()
-{
-    throw new NotImplementedException();
-}
+    // Validate category
+    string category;
 
-void SetMonthlyBudget()
-{
     while (true)
     {
-        Console.Write("Enter the monthly budget amount: ");
-        string input = Console.ReadLine()?.Trim() ?? "";
-        if (decimal.TryParse(input, out decimal budgetAmount))
+        Console.Write(
+            "Category    : [Food/Transport/Utilities/Entertainment/Other] ");
+
+        string? input = Console.ReadLine();
+        string? normalized = BudgetRules.NormalizeCategory(input);
+
+        if (normalized is not null)
         {
-            try
-            {
-                monthlyBudget = BudgetRules.ValidateAmount(budgetAmount);
-                Console.WriteLine($"Monthly budget set to {BudgetRules.FormatCurrency(monthlyBudget.Value)}.");
-                break;
-            }
-            catch (InvalidExpenseException ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+            category = normalized;
+            break;
         }
-        else
+
+        Console.WriteLine("  Invalid category. Please try again.");
+    }
+
+    // Validate date
+    DateTime expenseDate;
+
+    while (true)
+    {
+        Console.Write("Date (blank = today): ");
+        string? input = Console.ReadLine();
+
+        if (string.IsNullOrWhiteSpace(input))
         {
-            Console.WriteLine("Invalid input. Please enter a valid decimal number.");
+            expenseDate = DateTime.Today;
+            break;
+        }
+
+        if (DateTime.TryParse(input, out expenseDate))
+            break;
+
+        Console.WriteLine("  Invalid date. Please try again.");
+    }
+
+    // Optional note
+    Console.Write("Note (optional): ");
+    string note = Console.ReadLine()?.Trim() ?? "";
+
+    // Update running totals
+    totalExpenses += amount;
+    expenseCount++;
+
+    if (amount > highestExpense)
+        highestExpense = amount;
+
+    switch (category)
+    {
+        case "Food":
+            foodTotal += amount;
+            break;
+
+        case "Transport":
+            transportationTotal += amount;
+            break;
+
+        case "Utilities":
+            utilitiesTotal += amount;
+            break;
+
+        case "Entertainment":
+            entertainmentTotal += amount;
+            break;
+
+        case "Other":
+            otherTotal += amount;
+            break;
+    }
+
+    // Confirmation
+    Console.WriteLine(
+        $"  Recorded: {BudgetRules.FormatCurrency(amount)} | " +
+        $"{category} | {expenseDate:yyyy-MM-dd}");
+
+    Console.WriteLine(
+        $"    Size band : {BudgetRules.ClassifyAmount(amount)}");
+
+    // Show budget status only when configured
+    if (monthlyBudget.HasValue)
+    {
+        decimal remaining = monthlyBudget.Value - totalExpenses;
+
+        Console.WriteLine(
+            $"  Budget: {BudgetRules.FormatCurrency(remaining)} remaining of " +
+            $"{BudgetRules.FormatCurrency(monthlyBudget.Value)} -> " +
+            BudgetRules.BudgetStatus(remaining, monthlyBudget.Value));
+    }
+
+}
+
+
+// Method to view the summary: Displays total expenses, highest expense, average expense, and spending by category. Also shows budget status if set.
+void ViewSummary()
+{
+    Console.WriteLine();
+    Console.WriteLine("========== Expense Summary ==========");
+
+    Console.WriteLine($"Expenses recorded : {expenseCount}");
+
+    Console.WriteLine(
+        $"Total spent       : {BudgetRules.FormatCurrency(totalExpenses)}");
+
+    Console.WriteLine(
+        $"Highest expense   : {BudgetRules.FormatCurrency(highestExpense)}");
+
+    decimal average = expenseCount > 0
+        ? totalExpenses / expenseCount
+        : 0m;
+
+    Console.WriteLine(
+        $"Average expense   : {BudgetRules.FormatCurrency(average)}");
+
+    Console.WriteLine();
+    Console.WriteLine("Spending by category:");
+
+    Console.WriteLine($"  Food          : {BudgetRules.FormatCurrency(foodTotal)}");
+    Console.WriteLine($"  Transport     : {BudgetRules.FormatCurrency(transportationTotal)}");
+    Console.WriteLine($"  Utilities     : {BudgetRules.FormatCurrency(utilitiesTotal)}");
+    Console.WriteLine($"  Entertainment : {BudgetRules.FormatCurrency(entertainmentTotal)}");
+    Console.WriteLine($"  Other         : {BudgetRules.FormatCurrency(otherTotal)}");
+
+    Console.WriteLine();
+
+    if (monthlyBudget.HasValue)
+    {
+        decimal remaining = monthlyBudget.Value - totalExpenses;
+
+        Console.WriteLine(
+            $"Budget remaining : {BudgetRules.FormatCurrency(remaining)}");
+
+        Console.WriteLine(
+            $"Budget status    : " +
+            BudgetRules.BudgetStatus(remaining, monthlyBudget.Value));
+    }
+    else
+    {
+        Console.WriteLine("Monthly budget has not been set.");
+    }
+
+    Console.WriteLine("=====================================");
+}
+
+
+// Method to set the monthly budget: Validates input and updates the budget. Displays confirmation and remaining budget.
+void SetMonthlyBudget()
+{
+    int validationAttempts = 0;
+
+    while (true)
+    {
+        Console.Write("Monthly budget: ");
+        string? input = Console.ReadLine();
+
+        if (!decimal.TryParse(input, out decimal amount))
+        {
+            Console.WriteLine("  Please enter a valid number.");
+            continue;
+        }
+
+        try
+        {
+            decimal validatedBudget = BudgetRules.ValidateAmount(amount);
+            monthlyBudget = validatedBudget;
+
+            Console.WriteLine(
+                $"Budget set to {BudgetRules.FormatCurrency(validatedBudget)}.");
+
+            decimal remaining = validatedBudget - totalExpenses;
+
+            Console.WriteLine(
+                $"  Budget: {BudgetRules.FormatCurrency(remaining)} remaining of " +
+                $"{BudgetRules.FormatCurrency(validatedBudget)} -> " +
+                BudgetRules.BudgetStatus(remaining, validatedBudget));
+
+            break;
+        }
+        catch (InvalidExpenseException ex)
+        {
+            Console.WriteLine($"  {ex.Message}");
+        }
+        finally
+        {
+            validationAttempts++;
         }
     }
 }
