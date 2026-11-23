@@ -15,7 +15,9 @@ using MyBudget.Data;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+// Define the JSON file location.
 string dataPath = Path.Combine(AppContext.BaseDirectory, "expenses.json");
+
 
 // TODO (Module 8): register your services against their interfaces so the
 // container can construct ConsoleApp. You will need, for example:
@@ -24,6 +26,24 @@ string dataPath = Path.Combine(AppContext.BaseDirectory, "expenses.json");
 //   - IBudgetService      -> BudgetService
 //   - ConsoleApp          (the UI, so it can be resolved below)
 // Choose appropriate service lifetimes (singleton / scoped / transient).
+
+// Register the JSON storage service.
+// Singleton: uses the same file path throughout the application.
+builder.Services.AddSingleton<IExpenseStore>(
+    new JsonExpenseStore(dataPath));
+
+// Register the expense repository.
+// Singleton: keeps the same expense collection during execution.
+builder.Services.AddSingleton<IExpenseRepository, ExpenseRepository>();
+
+// Register the monthly budget service.
+// Singleton: maintains the budget state during execution.
+builder.Services.AddSingleton<IBudgetService, BudgetService>();
+
+// Register the console user interface.
+builder.Services.AddTransient<ConsoleApp>();
+
+// Build the host and run the application.
 
 using IHost host = builder.Build();
 
