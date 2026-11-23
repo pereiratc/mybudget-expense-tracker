@@ -8,29 +8,46 @@ namespace MyBudget.App;
 /// </summary>
 public sealed class ConsoleApp(IExpenseRepository repository, IBudgetService budget)
 {
+
+    // Displays a message using the specified console color.
+    private static void WriteColored(string message, ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+        Console.WriteLine(message);
+        Console.ResetColor();
+    }
+
     public void Run()
     {
-        Console.WriteLine("""
-            ============================================================
-              MyBudget — Assignment 2
-            ============================================================
-            """);
+        WriteColored("============================================================", ConsoleColor.Cyan);
+        WriteColored("                  MyBudget - Assignment 2", ConsoleColor.Yellow);
+        WriteColored("============================================================", ConsoleColor.Cyan);
 
         bool running = true;
+
         while (running)
         {
-            Console.WriteLine("""
+            Console.WriteLine();
+            WriteColored("=============== MAIN MENU ===============", ConsoleColor.Cyan);
+            Console.WriteLine("  1) Add expense");
+            Console.WriteLine("  2) List expenses");
+            Console.WriteLine("  3) Financial report");
+            Console.WriteLine("  4) Set monthly budget");
+            Console.WriteLine("  5) Save & exit");
+            WriteColored("=========================================", ConsoleColor.Cyan);
 
-                1) Add expense   2) List   3) Report   4) Set budget   5) Save & exit
-                """);
+            Console.Write("Choose an option: ");
+
             switch (Console.ReadLine()?.Trim())
             {
                 case "1": AddExpense(); break;
                 case "2": ListExpenses(); break;
                 case "3": ShowReport(); break;
                 case "4": SetBudget(); break;
-                case "5": repository.Save(); running = false; Console.WriteLine("Saved. Goodbye!"); break;
-                default: Console.WriteLine("Unknown option."); break;
+                case "5": repository.Save();
+                    running = false;
+                    WriteColored("Saved. Goodbye!", ConsoleColor.Green); break;
+                default: WriteColored("Unknown option.", ConsoleColor.Red); break;
             }
         }
     }
@@ -147,15 +164,56 @@ public sealed class ConsoleApp(IExpenseRepository repository, IBudgetService bud
         }
     }
 
+    // Accepts full category names or single-letter shortcuts.
     private static ExpenseCategory ReadCategory()
     {
         while (true)
         {
-            Console.Write("Category    : [Food/Transport/Utilities/Entertainment/Other] ");
-            if (Enum.TryParse(Console.ReadLine()?.Trim(), ignoreCase: true, out ExpenseCategory category)
-                && Enum.IsDefined(category))
+            WriteColored("Select an expense category:", ConsoleColor.Cyan);
+
+            Console.WriteLine("  [F] Food");
+            Console.WriteLine("  [T] Transport");
+            Console.WriteLine("  [U] Utilities");
+            Console.WriteLine("  [E] Entertainment");
+            Console.WriteLine("  [O] Other");
+
+            Console.Write("Category: ");
+
+            // Read and normalize user input.
+            string? input = Console.ReadLine()?.Trim();
+
+            // Convert shortcuts into full category names.
+            input = input?.ToUpperInvariant() switch
+            {
+                "F" => "Food",
+                "T" => "Transport",
+                "U" => "Utilities",
+                "E" => "Entertainment",
+                "O" => "Other",
+                _ => input
+            };
+            //Console.WriteLine($"DEBUG Input: '{input}'");
+            //Console.WriteLine($"DEBUG Categories: {string.Join(", ", Enum.GetNames<ExpenseCategory>())}");
+
+            /* if (Enum.TryParse(Console.ReadLine()?.Trim(), ignoreCase: true, out ExpenseCategory category)
+                 && Enum.IsDefined(category))
+                 return category;*/
+
+            // Check the result of each validation.
+           /* bool parsed = Enum.TryParse(
+                input,
+                ignoreCase: true,
+                out ExpenseCategory category);
+
+            bool defined = Enum.IsDefined(category);*/
+
+            //Console.WriteLine($"DEBUG: Input={input}, Parsed={parsed}, Defined={defined}");
+
+            if (Enum.TryParse(input, ignoreCase: true, out ExpenseCategory category)
+                 && Enum.IsDefined(category))
                 return category;
-            Console.WriteLine("  Unknown category.");
+
+            WriteColored("  Unknown category.", ConsoleColor.Red);
         }
     }
 
