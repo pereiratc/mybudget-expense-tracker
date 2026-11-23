@@ -200,14 +200,14 @@ public sealed class ConsoleApp(IExpenseRepository repository, IBudgetService bud
                  return category;*/
 
             // Check the result of each validation.
-           /* bool parsed = Enum.TryParse(
-                input,
-                ignoreCase: true,
-                out ExpenseCategory category);
+            /* bool parsed = Enum.TryParse(
+                 input,
+                 ignoreCase: true,
+                 out ExpenseCategory category);
 
-            bool defined = Enum.IsDefined(category);*/
+             bool defined = Enum.IsDefined(category);
 
-            //Console.WriteLine($"DEBUG: Input={input}, Parsed={parsed}, Defined={defined}");
+             Console.WriteLine($"DEBUG: Input={input}, Parsed={parsed}, Defined={defined}");*/
 
             if (Enum.TryParse(input, ignoreCase: true, out ExpenseCategory category)
                  && Enum.IsDefined(category))
