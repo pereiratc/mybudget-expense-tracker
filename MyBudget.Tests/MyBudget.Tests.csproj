@@ -15,7 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ExpenseTracker\ExpenseTracker.csproj" />
+    <ProjectReference Include="..\MyBudget.Core\MyBudget.Core.csproj" />
+    <ProjectReference Include="..\MyBudget.Data\MyBudget.Data.csproj" />
   </ItemGroup>
 
 </Project>
