@@ -7,18 +7,19 @@ public class BudgetService : IBudgetService
     // Stores the monthly limit. Only this class can change it.
     public decimal MonthlyLimit { get; private set; }
 
+
     // Sets a valid monthly budget limit.
     public void SetMonthlyLimit(decimal limit)
     {
         if (limit <= 0)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(limit),
+            throw new InvalidExpenseException(
                 "Monthly budget must be greater than zero.");
         }
 
         MonthlyLimit = Math.Round(limit, 2);
     }
+
 
     // Calculates how much money remains in the budget.
     public decimal Remaining(decimal totalSpent)
